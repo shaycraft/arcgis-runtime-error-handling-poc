@@ -24,10 +24,10 @@ class ViewController: UIViewController {
         featureLayer.load { [weak self] (error: Error?) in
             guard let self = self else { return }
             if let error = error {
-                self.printeDebugMessage(message:  "[LOAD CALLBACK], ERROR: \(error)")
+                self.printDebugMessage(message:  "[LOAD CALLBACK], ERROR: \(error)")
                 self.displayErrorAlert(error: "Error loading map image layer: \(error.localizedDescription)")
             } else {
-                self.printeDebugMessage(message: "[LOAD CALLBACK]: SUCCESS, no error")
+                self.printDebugMessage(message: "[LOAD CALLBACK]: SUCCESS, no error")
                 // no error, can do dependent processing here
             }
         }
@@ -45,7 +45,7 @@ class ViewController: UIViewController {
         return featureLayer
     }
     
-    private func printeDebugMessage(message :String) -> Void {
+    private func printDebugMessage(message :String) -> Void {
         print("========================== DEBUG PRINT ===========================")
         print(message)
         print("========================== END DEBUG =============================")
@@ -59,14 +59,14 @@ class ViewController: UIViewController {
         
         do {
             let mapResult = try setupMap()
-            self.printeDebugMessage(message: "[BEFORE TIME DELAY], loadStatus:  " + String(mapResult.loadStatus.rawValue))
+            self.printDebugMessage(message: "[BEFORE TIME DELAY], loadStatus:  " + String(mapResult.loadStatus.rawValue))
            
             DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                self.printeDebugMessage(message: "[AFTER TIME DELAY], loadError:   " + (mapResult.loadError?.localizedDescription ?? "[EMPTY]"))
-                self.printeDebugMessage(message: "[AFTER TIME DELAY], loadStatus: " + String(mapResult.loadStatus.rawValue))
+                self.printDebugMessage(message: "[AFTER TIME DELAY], loadError:   " + (mapResult.loadError?.localizedDescription ?? "[EMPTY]"))
+                self.printDebugMessage(message: "[AFTER TIME DELAY], loadStatus: " + String(mapResult.loadStatus.rawValue))
             }
         } catch {
-            self.printeDebugMessage(message: "[ERROR]: Error thrown in main thread!")
+            self.printDebugMessage(message: "[ERROR]: Error thrown in main thread!")
         }
     }
     
