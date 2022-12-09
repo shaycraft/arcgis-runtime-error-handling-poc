@@ -19,7 +19,6 @@ class ViewController: UIViewController {
             return AGSFeatureLayer(featureTable: trailheadsTable)
         }()
         
-        map.operationalLayers.add(featureLayer)
         
         featureLayer.load { [weak self] (error: Error?) in
             guard let self = self else { return }
@@ -29,6 +28,9 @@ class ViewController: UIViewController {
             } else {
                 self.printDebugMessage(message: "[LOAD CALLBACK]: SUCCESS, no error")
                 // no error, can do dependent processing here
+                
+                map.operationalLayers.add(featureLayer)
+
             }
         }
         mapView.map = map
