@@ -2,6 +2,16 @@ import UIKit
 
 import ArcGIS
 
+extension ViewController: AGSAuthenticationManagerDelegate {
+    func authenticationManager(_ authenticationManager: AGSAuthenticationManager, didReceive challenge: AGSAuthenticationChallenge) {
+        // NOTE: Never hardcode login information in a production application. This is done solely for the sake of the sample.
+        printDebugMessage(message: "We been challenged!")
+        // need to get token from token endpoint and paste here
+        let credentials = AGSCredential(token: "beBS5ASXeNTRsjBG3-b9oLr0rE7qx2JsCTrV56gGIGs.", referer: "http://localhost")
+        challenge.continue(with: credentials)
+    }
+}
+
 class ViewController: UIViewController {
     
     @IBOutlet weak var mapView: AGSMapView!
@@ -12,9 +22,16 @@ class ViewController: UIViewController {
             basemapStyle: .arcGISTopographic
         )
         
+        AGSAuthenticationManager.shared().delegate = self
+        
         let featureLayer: AGSFeatureLayer = {
             // Malform this URL to test errors
-            let featureServiceURL = URL(string: "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trailheads/FeatureServer/0")!
+//            let url = "https://foh1kgodaj.execute-api.us-west-2.amazonaws.com/arcgis/foo"
+//            let url = "https://xho1ow9dj5.execute-api.us-west-2.amazonaws.com/arcgis/foo"
+            // dev region url endpoint
+            let url = "https://fjk1l1iw9b.execute-api.us-east-2.amazonaws.com/arcgis/rest/services/GFEE/Gas_Transmission/FeatureServer/28"
+//             let url = "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trailheads/FeatureServer/0"
+            let featureServiceURL = URL(string: url)!
             let trailheadsTable = AGSServiceFeatureTable(url: featureServiceURL)
             return AGSFeatureLayer(featureTable: trailheadsTable)
         }()
