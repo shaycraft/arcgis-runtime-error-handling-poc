@@ -7,7 +7,7 @@ extension ViewController: AGSAuthenticationManagerDelegate {
         // NOTE: Never hardcode login information in a production application. This is done solely for the sake of the sample.
         printDebugMessage(message: "We been challenged!")
         // need to get token from token endpoint and paste here
-        let credentials = AGSCredential(token: "YKXamjz1XW43-SsAlEh-cjiAvMiHrHf_6RCR8sFWfrs.", referer: "http://localhost")
+        let credentials = AGSCredential(token: "YKXamjz1XW43-SsAlEh-clx3DvZtVkGx5s2NRzO-1QM.", referer: "http://localhost")
         challenge.continue(with: credentials)
     }
 }
@@ -19,7 +19,7 @@ class ViewController: UIViewController {
     private func setupMap() throws -> AGSFeatureLayer {
         
         let map = AGSMap(
-            basemapStyle: .arcGISTopographic
+            basemapStyle: .arcGISModernAntique
         )
         
         AGSAuthenticationManager.shared().delegate = self
@@ -31,10 +31,10 @@ class ViewController: UIViewController {
             //             let url = "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trailheads/FeatureServer/0"
             
             // dev region url endpoint
-            let url = "https://fjk1l1iw9b.execute-api.us-east-2.amazonaws.com/arcgis/rest/services/GFEE/Land/FeatureServer/6"
+            let url = "https://fjk1l1iw9b.execute-api.us-east-2.amazonaws.com/arcgis/rest/services/GFEE/Land/FeatureServer/0"
             let featureServiceURL = URL(string: url)!
-            let trailheadsTable = AGSServiceFeatureTable(url: featureServiceURL)
-            return AGSFeatureLayer(featureTable: trailheadsTable)
+            let featureTable = AGSServiceFeatureTable(url: featureServiceURL)
+            return AGSFeatureLayer(featureTable: featureTable)
         }()
         
         
@@ -52,11 +52,73 @@ class ViewController: UIViewController {
             }
         }
         
-        let featureLayerAnno: AGSFeatureLayer = {
-            let lotAnnoUrl = URL(string: "https://fjk1l1iw9b.execute-api.us-east-2.amazonaws.com/arcgis/rest/services/GFEE/Land/FeatureServer/1")!
-            let annoTable = AGSServiceFeatureTable(url: lotAnnoUrl)
-            return AGSFeatureLayer(featureTable: annoTable)
-        }()
+//        let featureLayerGasDistribution: AGSFeatureLayer = {
+//            // let url = "https://fjk1l1iw9b.execute-api.us-east-2.amazonaws.com/arcgis/rest/services/GFEE/Gas_Distribution/FeatureServer/2" // casing
+//            // let url = "https://fjk1l1iw9b.execute-api.us-east-2.amazonaws.com/arcgis/rest/services/GFEE/Gas_Distribution/FeatureServer/4" // control fitting
+//            let url = "https://fjk1l1iw9b.execute-api.us-east-2.amazonaws.com/arcgis/rest/services/GFEE/Gas_Distribution/FeatureServer/17"
+//
+//            let featureTable = AGSServiceFeatureTable(url: URL(string: url)!)
+//
+//            return AGSFeatureLayer(featureTable: featureTable)
+//        }()
+//
+//        featureLayerGasDistribution.load{ [weak self] (error: Error?) in
+//            guard let self = self else { return }
+//            if let error = error {
+//                self.printDebugMessage(message: "Load callback ERROR: \(error)")
+//                self.displayErrorAlert(error: "Error loading map image layer: \(error.localizedDescription)")
+//            } else {
+//                self.printDebugMessage(message: "No error happened")
+//                map.operationalLayers.add(featureLayerGasDistribution)
+//            }
+//
+//        }
+        
+                let featureLayerGasTransmission: AGSFeatureLayer = {
+                    let url = "https://fjk1l1iw9b.execute-api.us-east-2.amazonaws.com/arcgis/rest/services/GFEE/Gas_Transmission/FeatureServer/28"
+        
+                    let featureTable = AGSServiceFeatureTable(url: URL(string: url)!)
+                    
+                    return AGSFeatureLayer(featureTable: featureTable)
+                }()
+        
+        featureLayerGasTransmission.load{ [weak self] (error: Error?) in
+                    guard let self = self else { return }
+                    if let error = error {
+                        self.printDebugMessage(message: "Load callback ERROR: \(error)")
+                        self.displayErrorAlert(error: "Error loading map image layer: \(error.localizedDescription)")
+                    } else {
+                        self.printDebugMessage(message: "No error happened")
+                        map.operationalLayers.add(featureLayerGasTransmission)
+                    }
+        
+                }
+        
+//        let featureLayerLand: AGSFeatureLayer = {
+//            let url = "https://fjk1l1iw9b.execute-api.us-east-2.amazonaws.com/arcgis/rest/services/GFEE/Land/FeatureServer/1" // lot centroid
+//
+//            let featureTable = AGSServiceFeatureTable(url: URL(string: url)!)
+//
+//            return AGSFeatureLayer(featureTable: featureTable)
+//        }()
+//
+//        featureLayerLand.load{ [weak self] (error: Error?) in
+//            guard let self = self else { return }
+//            if let error = error {
+//                self.printDebugMessage(message: "Load callback ERROR: \(error)")
+//                self.displayErrorAlert(error: "Error loading map image layer: \(error.localizedDescription)")
+//            } else {
+//                self.printDebugMessage(message: "No error happened")
+//                map.operationalLayers.add(featureLayerLand)
+//            }
+//
+//        }
+        
+//        let featureLayerAnno: AGSFeatureLayer = {
+//            let lotAnnoUrl = URL(string: "https://fjk1l1iw9b.execute-api.us-east-2.amazonaws.com/arcgis/rest/services/GFEE/Land/FeatureServer/1")!
+//            let annoTable = AGSServiceFeatureTable(url: lotAnnoUrl)
+//            return AGSFeatureLayer(featureTable: annoTable)
+//        }()
         
 //        featureLayerAnno.load { [weak self] (error: Error?) in
 //            guard let self = self else { return }
@@ -71,16 +133,18 @@ class ViewController: UIViewController {
 //
 //            }
 //        }
-        map.operationalLayers.add(featureLayerAnno)
         
         
         mapView.map = map
         
+        let lat = 39.736943
+        let long = -104.973093 // 13th & Downing, Denver
+        
         mapView.setViewpoint(
             AGSViewpoint(
-                latitude: 39.72700,
-                longitude: -104.85511,
-                scale: 30_000
+                latitude: lat,
+                longitude: long,
+                scale: 10_000
             )
         )
         
@@ -104,10 +168,10 @@ class ViewController: UIViewController {
             let mapResult = try setupMap()
             self.printDebugMessage(message: "[BEFORE TIME DELAY], loadStatus:  " + String(mapResult.loadStatus.rawValue))
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                self.printDebugMessage(message: "[AFTER TIME DELAY], loadError:   " + (mapResult.loadError?.localizedDescription ?? "[EMPTY]"))
-                self.printDebugMessage(message: "[AFTER TIME DELAY], loadStatus: " + String(mapResult.loadStatus.rawValue))
-            }
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+//                self.printDebugMessage(message: "[AFTER TIME DELAY], loadError:   " + (mapResult.loadError?.localizedDescription ?? "[EMPTY]"))
+//                self.printDebugMessage(message: "[AFTER TIME DELAY], loadStatus: " + String(mapResult.loadStatus.rawValue))
+//            }
         } catch {
             self.printDebugMessage(message: "[ERROR]: Error thrown in main thread!")
         }
